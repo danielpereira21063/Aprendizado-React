@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { db } from "../firebase/config";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore/lite";
 
 export const useFetchDocument = (docCollection, id) => {
   const [document, setDocument] = useState(null);
@@ -17,8 +17,8 @@ export const useFetchDocument = (docCollection, id) => {
 
         setDocument(docSnap.data());
       } catch (error) {
-        console.log(error);
         setError(error.message);
+        console.log(error);
       }
 
       setLoading(false);
@@ -26,8 +26,6 @@ export const useFetchDocument = (docCollection, id) => {
 
     loadDocument();
   }, [docCollection, id]);
-
-  console.log(document);
 
   return { document, loading, error };
 };
