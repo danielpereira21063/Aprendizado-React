@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { useInsertDocument } from "../../hooks/useInsertDocumentation";
-import { useAuthValue } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-
 import styles from "./CreatePost.module.css";
 
+import { useState } from "react";
+import { useInsertDocument } from "../../hooks/useInsertDocument";
+import { useNavigate } from "react-router-dom";
+import { useAuthValue } from "../../contexts/AuthContext";
 
 const CreatePost = () => {
   const [title, setTitle] = useState("");
@@ -13,99 +12,117 @@ const CreatePost = () => {
   const [tags, setTags] = useState([]);
   const [formError, setFormError] = useState("");
 
-  const { insertDocument, response } = useInsertDocument("posts");
+  const { user } = useAuthValue();
 
   const navigate = useNavigate();
 
-  const { user } = useAuthValue();
+  const { insertDocument, response } = useInsertDocument("posts");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormError("");
 
+    // validate image
     try {
-      new URL(image)
+      new URL(image);
     } catch (error) {
-      setFormError("A imagem precisa ser uma URL")
+      setFormError("A imagem precisa ser uma URL.");
     }
 
+    // create tags array
     const tagsArray = tags.split(",").map((tag) => tag.trim().toLowerCase());
 
-    if(!title || !image || !tags || !body) {
+    // check values
+    if (!title || !image || !tags || !body) {
       setFormError("Por favor, preencha todos os campos!");
     }
 
-    if (formError) return;
+    console.log(tagsArray);
 
+    console.log({
+      title,
+      image,
+      body,
+      tags: tagsArray,
+      uid: user.uid,
+      createdBy: user.displayName,
+    });
+
+    if(formError) return
 
     insertDocument({
       title,
       image,
       body,
-      tagsArray,
+      tags: tagsArray,
       uid: user.uid,
-      createdBy: user.displayName
+      createdBy: user.displayName,
     });
-    navigate("/");
-  }
 
+    // redirect to home page
+    navigate("/");
+  };
 
   return (
-    <div className={styles.createPost}>
-      <h2 style={{ textAlign: 'center' }}>Criar post</h2>
-      <p style={{ textAlign: 'center' }}>Escreva sobre o que quiser e compartilhe o seu conhecimento</p>
+    <div className={styles.create_post}>
+      <h2>Criar post</h2>
+      <p>Escreva sobre o que quiser e compartilhe o seu conhecimento!</p>
       <form onSubmit={handleSubmit}>
         <label>
-          <span>Título: </span>
+          <span>Título:</span>
           <input
             type="text"
-            name="title"
+            name="text"
             required
-            placeholder="Pense num bom título"
+            placeholder="Pense num bom título..."
             onChange={(e) => setTitle(e.target.value)}
-            value={title} />
+            value={title}
+          />
         </label>
-
         <label>
-          <span>Imagem: </span>
+          <span>URL da imagem:</span>
           <input
             type="text"
             name="image"
             required
-            placeholder="Escolha uma imagem que represente o seu post"
+            placeholder="Insira uma imagem que representa seu post"
             onChange={(e) => setImage(e.target.value)}
-            value={image} />
+            value={image}
+          />
         </label>
-
         <label>
-          <span>Conteúdo: </span>
+          <span>Conteúdo:</span>
           <textarea
             name="body"
             required
             placeholder="Insira o conteúdo do post"
             onChange={(e) => setBody(e.target.value)}
-            value={body} >
-          </textarea>
+            value={body}
+          ></textarea>
         </label>
-
         <label>
-          <span>Tags: </span>
+          <span>Tags:</span>
           <input
             type="text"
             name="tags"
             required
-            placeholder="Insira tags separadas por vírgula"
+            placeholder="Insira as tags separadas por vírgula"
             onChange={(e) => setTags(e.target.value)}
-            value={tags} />
+            value={tags}
+          />
         </label>
-
-        {!response.loading && <button type="submit" className="btn">Cadastrar</button>}
-        {response.loading && <button className="btn" disabled>Aguarde...</button>}
-        {response.error && <p className="error">{response.error}</p>}
-        {formError && <p className="error">{formError}</p>}
+        {!response.loading && <button className="btn">Criar post!</button>}
+        {response.loading && (
+          <button className="btn" disabled>
+            Aguarde.. .
+          </button>
+        )}
+        {(response.error || formError) && (
+          <p className="error">{response.error || formError}</p>
+        )}
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default CreatePost;
