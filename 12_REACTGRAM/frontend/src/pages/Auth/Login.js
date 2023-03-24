@@ -5,17 +5,15 @@ import { Link } from "react-router-dom";
 import Message from "../../components/Message";
 
 // Hooks
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // Redux
-import { register, reset } from "../../slices/authSlice";
+import { login, reset } from "../../slices/authSlice";
 
-const Register = () => {
-  const [name, setName] = useState("");
+const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
   const dispatch = useDispatch();
 
@@ -25,15 +23,13 @@ const Register = () => {
     e.preventDefault();
 
     const user = {
-      name,
       email,
       password,
-      confirmPassword,
     };
 
     console.log(user);
 
-    dispatch(register(user));
+    dispatch(login(user));
   };
 
   // Clean all auth states
@@ -42,18 +38,12 @@ const Register = () => {
   }, [dispatch]);
 
   return (
-    <div id="register">
+    <div id="login">
       <h2>ReactGram</h2>
-      <p className="subtitle">Cadastre-se para ver as fotos dos seus amigos.</p>
+      <p className="subtitle">Faça o login para ver o que há de novo.</p>
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          placeholder="Nome"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-        <input
-          type="email"
           placeholder="E-mail"
           onChange={(e) => setEmail(e.target.value)}
           value={email}
@@ -64,21 +54,15 @@ const Register = () => {
           onChange={(e) => setPassword(e.target.value)}
           value={password}
         />
-        <input
-          type="password"
-          placeholder="Confirme a senha"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          value={confirmPassword}
-        />
-        {!loading && <input type="submit" value="Cadastrar" />}
+        {!loading && <input type="submit" value="Entrar" />}
         {loading && <input type="submit" disabled value="Aguarde..." />}
         {error && <Message msg={error} type="error" />}
       </form>
       <p>
-        Já tem conta? <Link to="/login">Clique aqui</Link>
+        Não tem uma conta? <Link to="/register">Clique aqui</Link>
       </p>
     </div>
   );
 };
 
-export default Register;
+export default Login;
