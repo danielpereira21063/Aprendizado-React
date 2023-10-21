@@ -1,0 +1,49 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Camisa",
+      "price": 59.9
+    },
+    {
+      "id": 2,
+      "name": "Calça vermelha",
+      "price": 90
+    },
+    {
+      "id": 3,
+      "name": "Boné aba reta",
+      "price": 29.9
+    },
+    {
+      "name": "Mouse",
+      "price": "25",
+      "id": 7
+    },
+    {
+      "name": "Teclado",
+      "price": "110",
+      "id": 9
+    },
+    {
+      "name": "Cadeira",
+      "price": "200",
+      "id": 10
+    },
+    {
+      "name": "Mouse",
+      "price": "60",
+      "id": 11
+    },
+    {
+      "name": "Suporte de monitor",
+      "price": "120",
+      "id": 12
+    },
+    {
+      "name": "Cabo HDMI",
+      "price": "10",
+      "id": 13
+    }
+  ]
+}

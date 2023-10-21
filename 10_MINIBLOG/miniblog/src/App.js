@@ -1,83 +1,72 @@
-import "./App.css";
+import './App.sass';
 
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { onAuthStateChanged } from "firebase/auth";
-
-// hooks
-import { useState, useEffect } from "react";
-import { useAuthentication } from "./hooks/useAuthentication";
-
-// pages
-import Home from "./pages/Home/Home";
-import About from "./pages/About/About";
-import Post from "./pages/Post/Post";
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useAuthentication } from './hooks/useAuthentication';
+import { useEffect, useState } from 'react';
 
 // components
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import CreatePost from "./pages/CreatePost/CreatePost";
-import Search from "./pages/Search/Search";
-import Login from "./pages/Login/Login";
-import Register from "./pages/Register/Register";
-import Dashboard from "./pages/Dashboard/Dashboard";
-import EditPost from "./pages/EditPost/EditPost";
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 
 // context
-import { AuthProvider } from "./contexts/AuthContext";
+import { AuthProvider } from './context/AuthContext';
+
+// pages
+import Home from './pages/Home';
+import About from './pages/About';
+import Search from './pages/Search';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import CreatePost from './pages/CreatePost';
+import Dashboard from './pages/Dashboard';
+import Post from './pages/Post';
+import EditPost from './pages/EditPost';
+
 
 function App() {
   const [user, setUser] = useState(undefined);
   const { auth } = useAuthentication();
 
+  // if user is undefined, then we are still loading data.
   const loadingUser = user === undefined;
 
+  // every time we have an auth change, we have a useEffect to execute the user change
   useEffect(() => {
+    // even if we don't have a user, we will receive something different than undefined
     onAuthStateChanged(auth, (user) => {
       setUser(user);
     });
   }, [auth]);
 
+  // if user is still loading (undefined) we show only a p tag with a loading message
   if (loadingUser) {
     return <p>Carregando...</p>;
   }
 
   return (
-    <div className="App">
+    <main className="App">
+      {/* after fetching user info, send it to context to feed other parts of the app */}
       <AuthProvider value={{ user }}>
-        <BrowserRouter>
+        <Router>
           <Navbar />
           <div className="container">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/about" element={<About />} />
-              <Route
-                path="/posts/create"
-                element={user ? <CreatePost /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/posts/edit/:id"
-                element={user ? <EditPost /> : <Navigate to="/login" />}
-              />
-              <Route path="/posts/:id" element={<Post />} />
-              <Route path="/search" element={<Search />} />
-              <Route
-                path="/login"
-                element={!user ? <Login /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/register"
-                element={!user ? <Register /> : <Navigate to="/" />}
-              />
-              <Route
-                path="/dashboard"
-                element={user ? <Dashboard /> : <Navigate to="/login" />}
-              />
+              <Route path='/' element={<Home />} />
+              <Route path='/about' element={<About />} />
+              <Route path='/search' element={<Search />} />
+              <Route path='/posts/:id' element={<Post />} />
+              <Route path='/login' element={!user ? <Login /> : <Navigate to='/' />} />
+              <Route path='/register' element={!user ? <Register /> : <Navigate to='/' />} />
+              <Route path='/posts/create' element={user ? <CreatePost /> : <Navigate to='/login' />} />
+              <Route path='/posts/edit/:id' element={user ? <EditPost /> : <Navigate to='/login' />} />
+              <Route path='/dashboard' element={user ? <Dashboard /> : <Navigate to='/login' />} />
             </Routes>
           </div>
           <Footer />
-        </BrowserRouter>
+        </Router>
       </AuthProvider>
-    </div>
+    </main>
   );
 }
 
